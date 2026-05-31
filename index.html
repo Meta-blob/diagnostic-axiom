@@ -1090,17 +1090,19 @@ async function generateLinks() {
     return { name, code, url: `${baseURL}?id=${code}` };
   });
 
-  // Écrire chaque personne dans l'onglet Suivi du Google Sheet
-  const promises = generatedLinks.map(item =>
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'register', name: item.name, code: item.code })
-    }).catch(() => {})
-  );
-
-  await Promise.all(promises);
+  // Écrire chaque personne une par une dans l'onglet Suivi
+  for (const item of generatedLinks) {
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'register', name: item.name, code: item.code })
+      });
+    } catch(e) {}
+    // Petite pause entre chaque requête pour laisser le temps au Sheet
+    await new Promise(r => setTimeout(r, 300));
+  }
 
   const tbody = document.getElementById('linksBody');
   tbody.innerHTML = generatedLinks.map((item) => `
