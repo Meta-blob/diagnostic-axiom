@@ -500,9 +500,16 @@
     background: rgba(26,26,46,0.7);
     z-index: 999;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .popup-overlay::after {
+    content: '';
+    min-height: 1.5rem;
+    display: block;
   }
 
   .popup-box {
